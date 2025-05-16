@@ -1,0 +1,236 @@
+﻿@using QuantumEvents.Models
+@{
+    ViewData["Title"] = "Прикрепить файлы к заявке";
+    var userBookings = ViewBag.UserBookings as List<Booking>;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #6A9FFF 0%, rgba(255, 0, 0, 0.33) 60%, white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .booking-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        select, input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            width: 100%;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+
+        .btn-outline-secondary {
+            background-color: white;
+            color: #6c757d;
+            border: 1px solid #6c757d;
+        }
+
+        .alert {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .text {
+            text-align: center;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+            .button-group a {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+            }
+
+        @@media (max-width: 576px) {
+            .booking-container {
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+                .button-group a {
+                    width: 100%;
+                }
+        }
+    </style>
+</head>
+<body>
+    <div class="booking-container">
+        <h1>Прикрепить файлы к заявке</h1>
+        <p class="text">Выберите из списка ниже подтвержденную заявку, в ином случае - она будет неактивна!</p>
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        @if (TempData["Notice"] != null)
+        {
+            <div class="alert alert-warning">@TempData["Notice"]</div>
+        }
+
+        <form id="fileUploadForm" method="post" enctype="multipart/form-data" onsubmit="return validateFileTypes()">
+            <div class="form-group">
+                <label for="bookingId">Доступные заявки:</label>
+                <select id="bookingId" name="bookingId" class="form-control" required>
+                    <option value="">-- Выберите заявку --</option>
+                    @if (userBookings != null)
+                    {
+                        foreach (var booking in userBookings)
+                        {
+                            // Проверка статуса заявки
+                            if (booking.Status == "Отклонено")
+                            {
+                                // Здесь можно просто пропустить отображение этой заявки
+                                continue;
+                            }
+
+                            <option value="@booking.ID" @(booking.Status == "Новое" ? "disabled" : "")>
+                                Заявка #@booking.ID (@booking.TypeEvent) - @booking.BookingDate.ToString("dd.MM.yyyy")
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="excelFile">Excel файл (.xlsx):</label>
+                <input type="file" id="excelFile" name="excelFile" accept=".xlsx" required class="form-control" />
+            </div>
+
+@*             <div class="form-group">
+                <label for="pdfFile">PDF файл (.pdf):</label>
+                <input type="file" id="pdfFile" name="pdfFile" accept=".pdf" required class="form-control" />
+            </div>
+ *@
+            <button type="submit" class="btn btn-primary">Прикрепить файлы</button>
+        </form>
+
+        <div class="button-group">
+            <a href="@Url.Action("DownloadExcelTemplate")" class="btn btn-outline-secondary">Скачать шаблон Excel</a>
+            @* <a href="@Url.Action("DownloadApplicationLetter")" class="btn btn-outline-secondary">Скачать шаблон PDF</a>
+             *@<a href="/Booking" class="btn btn-secondary">Вернуться назад</a>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <p>@error.ErrorMessage</p>
+                }
+            </div>
+        }
+    </div>
+
+    <script>
+        function validateFileTypes() {
+            const excelFile = document.getElementById('excelFile').files[0];
+            // const pdfFile = document.getElementById('pdfFile').files[0];
+
+            let valid = true;
+            const errorMessages = [];
+
+            if (excelFile && excelFile.type !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                valid = false;
+                errorMessages.push("Пожалуйста, выберите файл формата Excel (.xlsx) для Excel файла.");
+            }
+
+            // if (pdfFile && pdfFile.type !== "application/pdf") {
+            //     valid = false;
+            //     errorMessages.push("Пожалуйста, выберите файл формата PDF (.pdf) для PDF файла.");
+            // }
+
+            if (!valid) {
+                alert(errorMessages.join("\n"));
+                return false; // предотвращаем отправку формы
+            }
+
+            return true; // разрешаем отправку формы
+        }
+    </script>
+</body>
+</html>

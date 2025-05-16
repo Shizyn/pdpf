@@ -1,0 +1,236 @@
+﻿<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantumEvents</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to left, #ff000073, #6A9FFF, #fff);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: black;
+            margin-left: 20px;
+        }
+
+        header nav {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            flex-wrap: wrap; /* Позволяет кнопкам переноситься на другую строку */
+        }
+
+        header nav a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            padding: 10px 15px;
+            border: 1px solid transparent;
+            transition: border-color 0.3s;
+            border-radius: 25px;
+            box-sizing: border-box;
+            margin-right: 10px;
+        }
+
+        header nav a:hover {
+            border-color: #333;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 120px auto;
+            padding: 100px;
+            max-width: 1200px;
+            flex-direction: column; /* Вертикальное расположение для маленьких экранов */
+        }
+
+        .text-container {
+            max-width: 600px;
+            margin: 0;
+            text-align: center; /* Центрирование текста на мобильных */
+        }
+
+        .text-container h1 {
+            font-size: 48px;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 1px 2px 200px #000000;
+        }
+
+        .text-container p {
+            font-size: 22px;
+            line-height: 1.6;
+            color: white;
+            text-align: justify;
+            font-family: 'Gill Sans MT', sans-serif;
+        }
+
+        footer {
+            font-size: 15px;
+            text-align: center;
+            padding: 20px;
+            background-color: #0000001c;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .center-container {
+            display: grid;
+            justify-content: center;
+            align-items: center;
+            margin: 35px;
+            max-width: 1200px;
+        }
+
+        /* Медиа-запросы */
+        media (max-width: 800px) {
+
+            header {
+                padding: 10px; /* Меньше отступов в заголовке */
+            }
+
+            header .logo {
+                font-size: 20px; /* Меньше размер шрифта лого */
+            }
+
+            header nav a {
+                font-size: 14px; /* Меньше размер шрифта для ссылок */
+                padding: 8px 10px; /* Меньше отступы для ссылок */
+            }
+
+            .main-container {
+                margin: 40px auto; /* Меньше отступ сверху для мобильных */
+                padding: 40px; /* Меньше внутренних отступов */
+            }
+
+            .text-container {
+            max-width: 90%; /* Ширина контейнера с текстом на мобильных */
+            text-align: center;
+            }
+            .p{
+                text-align: center;
+            }
+            .text-container h1 {
+                font-size: 36px; /* Меньше размер заголовка на мобильных */
+            }
+
+            .text-container p {
+                font-size: 18px; /* Меньше размер текста на мобильных */
+            }
+
+            footer {
+                padding: 10px; /* Меньше отступы в подвале */
+                font-size: 14px; /* Меньше размер шрифта в подвале */
+            }
+        }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">QUANTUMEVENTS</div>
+        <nav>
+            <a href="/booking" class="center-button">Мои заявки</a>
+
+            @if (ViewData["UserEmail"] == null)
+            {
+                <a href="/Home/Login">Авторизация</a>
+                <a href="/Home/RegIn">Регистрация</a>
+            }
+            else
+            {
+                <div class="dropdown">
+                    <a href="javascript:void(0)">@ViewData["UserEmail"]</a>
+                    <div class="dropdown-content">
+                        <a href="/Home/Logout">Выйти</a>
+                    </div>
+                </div>
+            }
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <div class="text-container">
+            @if (ViewData["UserEmail"] == null)
+            {
+                <h1>Автоматизация мероприятий</h1>
+                <p>
+                    «QuantumEvents» — это платформа для планирования и организации мероприятий.
+                    Мы предоставляем удобное решение для управления и регистрации на мастер-классы или экскурсии в наш технопарк «Кванториум Фотоника».
+                    Благодаря нашему сервису вы можете легко и быстро подать заявки на любое из предоставленных мероприятий, а также управлять всем процессом, получать информацию и многое другое.
+                </p>
+            }
+            else {
+                <div class="center-container">
+                    <h1>Добро пожаловать в Ваш личный кабинет!</h1>
+                    <p class="instr">
+                        Инструкция:
+                        Для взаимодействия с системой перейдите в раздел «Мои заявки» и подайте предварительную заявку на любое из мероприятий.
+                        После её одобрения вы можете подать окончательную заявку!
+                    </p>
+                </div>
+            }
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 QuantumEvents
+    </footer>
+</body>
+</html>

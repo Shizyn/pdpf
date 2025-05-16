@@ -1,0 +1,173 @@
+﻿@using QuantumEvents.Models
+@{
+    ViewData["Title"] = "Прикрепить файлы к заявке";
+    var userBookings = ViewBag.UserBookings as List<Booking>;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #6A9FFF 0%, rgba(255, 0, 0, 0.33) 60%, white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .booking-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        select, input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            width: 100%;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+
+        .btn-outline-secondary {
+            background-color: white;
+            color: #6c757d;
+            border: 1px solid #6c757d;
+        }
+
+        .alert {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .text {
+            text-align: center;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+            .button-group a {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+            }
+
+        @@media (max-width: 576px) {
+            .booking-container {
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+                .button-group a {
+                    width: 100%;
+                }
+        }
+    </style>
+</head>
+<body>
+    <div class="booking-container">
+        <h1>Редактировать окончательную заявку</h1>
+
+        <form method="post" enctype="multipart/form-data">
+            <input type="hidden" name="bookingId" value="@Model.ID" />
+
+            <div class="form-group">
+                <label for="excelFile">Excel файл (.xlsx):</label>
+                <input type="file" id="excelFile" name="excelFile" accept=".xlsx" class="form-control" />
+            </div>
+@* 
+            <div class="form-group">
+                <label for="pdfFile">PDF файл (.pdf):</label>
+                <input type="file" id="pdfFile" name="pdfFile" accept=".pdf" class="form-control" />
+            </div> *@
+
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <a href="@Url.Action("Index", "Admin")" class="btn btn-secondary" style="margin-left: 10px;">Назад</a>
+        </form>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+        @if (TempData["Success"] != null)
+        {
+        <div class="alert alert-success">@TempData["Success"]</div>
+        }
+    </div>
+
+</body>
+</html>

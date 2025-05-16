@@ -1,0 +1,258 @@
+﻿@model IEnumerable<QuantumEvents.Models.Booking>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои заявки</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(to bottom, white, #6495EDBA);
+            min-height: 100vh;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            table-layout: auto; 
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .center-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 20px 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn {
+            background-color: white;
+            color: black;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 20px 5px;
+            transition: background-color 0.3s;
+        }
+
+        .center-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* .btn:hover {
+            background-color: #0056b3;
+        } */
+
+        .button-container {
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            flex-wrap: wrap; 
+        }
+
+        .centered {
+            margin: 0 auto; 
+            width: fit-content; 
+            display: block; 
+            padding: 20px;
+        }
+
+        .booking {
+            margin: 0 auto;
+            width: fit-content;
+            display: block;
+            padding: 20px;
+            color: orangered;
+            font-size: 17px;
+            font-variant: petite-caps;
+            text-align: center; 
+        }
+
+        
+
+        media (max-width: 768px) {
+            body {
+                padding: 10px; 
+            }
+
+            table, th, td {
+                padding: 8px; 
+                font-size: 0.9rem;
+            }
+
+            .center-button, .btn {
+                padding: 8px 12px;
+            }
+
+            .booking {
+                font-size: 16px; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="centered">Все заявки</h1>
+
+        @if (Model != null && Model.Any())
+        {
+            // Предварительные заявки
+            <h2 class="section-title">Заявки на профпробы</h2>
+            <table>
+                <thead>
+
+                    <tr>
+                        @* <th>ID</th> *@
+                        @* <th>Тип мероприятия</th> *@
+                        <th>Профпроба</th>
+                        <th>Событие</th>
+                        <th>ФИО</th>
+                        <th>Email</th>
+                        <th>Телефон</th>
+						<th>Учебное заведение</th>
+						<th>Количество людей</th>
+						<th>Дата</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model)
+                    {
+                        <tr style="@(booking.Status == "Новое" ? "background-color:#f2f2f2;" : booking.Status == "Подтверждено" ? "background-color:#c1ffa55e;" : booking.Status == "Отклонено" ? "background-color:#ffa5a557;": "")">
+                            @* <td>@booking.ID</td> *@
+                            @* <td>@booking.TypeEvent</td> *@
+                            <td>@booking.ProfProba?.Name</td>
+                            <td>@booking.Event?.Name</td>
+                            <td>@booking.FullName</td>
+                            <td>@booking.Email</td>
+                            <td>@booking.PhoneNumber</td>
+                            <td>@booking.SchoolName</td>
+                            <td>@booking.BookingDate.ToString("dd.MM.yyyy")</td>
+                            <td>@booking.TimeRange</td>
+                            <td>@booking.Status</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @if (ViewBag.Excursions != null && (ViewBag.Excursions as List<QuantumEvents.Models.ExcursionBooking>).Any())
+            {
+            <h2 class="section-title">Заявки на экскурсии</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Email</th>
+                        <th>Телефон</th>
+						<th>Школа</th>
+						<th>Количество людей</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var excursion in ViewBag.Excursions as List<QuantumEvents.Models.ExcursionBooking>)
+                    {
+                            <tr style="@(excursion.Status == "Новое" ? "background-color:#f2f2f2;" : excursion.Status == "Подтверждено" ? "background-color:#c1ffa55e;" : excursion.Status == "Отклонено" ? "background-color:#ffa5a557;": "")">
+                            <td>@excursion.FullName</td>
+                            <td>@excursion.Email</td>
+                            <td>@excursion.PhoneNumber</td>
+                            <td>@excursion.SchoolName</td>
+                            <td>@excursion.BookingDate.ToShortDateString()</td>
+                            <td>@excursion.TimeRange</td>
+                            <td class="status">@excursion.Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            }
+        
+            <h2>Окончательные заявки</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Почта</th>
+                        <th>ФИО</th>
+                        <th>Файлы</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        @foreach (var booking in Model)
+                        {
+                            // Проверяем, есть ли у заявки прикрепленные файлы
+                            if (booking.Files != null && booking.Files.Any())
+                            {
+                                <tr>
+                                    @* <td>@booking.ID</td> *@
+                                    <td>@booking.BookingDate</td>
+                                    <td>@booking.Email</td>
+                                    <td>@booking.FullName</td>
+                                    <td>
+                                        @foreach (var file in booking.Files)
+                                        {
+                                            <a href="@Url.Action("DownloadFile", new { id = file.Id })">@file.FileName</a>
+                                            <br />
+                                        <br />
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                </tbody>
+            </table>
+
+        }
+        else {
+            <p class="booking">Заявки не найдены</p>
+        }       
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+        <div class="alert">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+            <p>@error.ErrorMessage</p>
+            }
+        </div>
+        }
+    </div>
+
+    <div class="button-container">
+        <a class="center-button" href="/Booking/Create?eventType=MasterClass">Добавить заявку на проф пробы</a>
+        <a class="center-button" href="/Booking/ExcursionCreate">Добавить заявку на экскурсию</a>
+        <a class="center-button" href="/Booking/CreateFinalBooking">Добавить окончательную заявку</a>
+        <a href="/" class="btn btn-secondary">Вернуться на главную</a>
+    </div>
+</body>
+</html>
+

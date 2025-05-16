@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.7-beta.19/jquery.inputmask.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать новую заявку</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #6A9FFF 0%, rgba(255, 0, 0, 0.33) 60%, white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .booking-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+            select:focus, input:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+
+        .btn-submit {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 15px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+
+            .btn-submit:hover {
+                background-color: #0056b3;
+            }
+
+        .alert {
+            margin-top: 10px;
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="booking-container">
+        <h1>@ViewData["Title"]</h1>
+        <form method="post">
+            <div class="form-group">
+                <label for="fullName">ФИО:</label>
+                <input type="text" id="fullName" name="fullName" required />
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required />
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" name="phoneNumber" placeholder="8(XXX)-XXX-XX-XX" required />
+            </div>
+
+            <div class="form-group">
+                <label for="schoolName">Учебное заведение:</label>
+                <input type="text" id="schoolName" name="schoolName" required />
+            </div>
+
+            <div class="form-group">
+                <label for="bookingDate">Дата экскурсии:</label>
+                <input type="date" id="bookingDate" name="bookingDate" required />
+            </div>
+
+            <div class="form-group">
+                <label for="timeRange">Количество человек:</label>
+                <input type="text" id="timeRange" name="timeRange" required />
+            </div>
+
+            <button type="submit" class="btn-submit">Отправить заявку</button>
+            <a href="/Booking" class="btn">Назад</a>
+        </form>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <p>@error.ErrorMessage</p>
+                }
+            </div>
+        }
+    </div>
+</body>
+</html>
