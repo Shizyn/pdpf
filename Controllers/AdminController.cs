@@ -27,6 +27,11 @@ namespace QuantumEvents.Controllers
         }
         public IActionResult Index()
         {
+            var bookings = _context.Bookings
+                .Include(b => b.ProfProba)
+                .Include(b => b.Event)
+                .ToList();
+
             var viewModel = new AdminDashboardViewModel
             {
                 Bookings = GetBookings(),
@@ -82,9 +87,13 @@ namespace QuantumEvents.Controllers
         public IActionResult EditExcursion(int id)
         {
             var excursion = _context.ExcursionBookings.FirstOrDefault(e => e.Id == id);
-            if (excursion == null) return NotFound();
+            if (excursion == null)
+            {
+                return NotFound();
+            }
             return View(excursion);
         }
+
 
         [HttpPost]
         public IActionResult EditExcursion(ExcursionBooking updated)
@@ -146,7 +155,6 @@ namespace QuantumEvents.Controllers
                 _context.Bookings.Remove(booking);
                 _context.SaveChanges();
             }
-
             return RedirectToAction("Index");
         }
 
@@ -214,19 +222,7 @@ namespace QuantumEvents.Controllers
             return View();
         }
        
-        [HttpGet]
-        public IActionResult Update(int id) //редактирование заявки
-        {
-            var bookings = _context.Bookings.FirstOrDefault(x => x.ID == id);
-            if (bookings == null)
-            {
-                return NotFound();
-            }
-            ViewBag.ProfProby = _context.ProfProby?.ToList() ?? new List<ProfProba>();
-            ViewBag.Events = _context.Events?.ToList() ?? new List<Event>();
-
-            return View(bookings);
-        }
+       
 
         // Метод для редактирования окончательной заявки
         [HttpGet]
@@ -240,36 +236,58 @@ namespace QuantumEvents.Controllers
             }
             return View(booking);
         }
-
-        [HttpPost]
-        public IActionResult Update([FromForm] Booking updatedBooking)
+        [HttpGet]
+        public IActionResult Update(int id)
         {
-            if (!ModelState.IsValid)
+            var booking = _context.Bookings
+                .Include(b => b.ProfProba)
+                .Include(b => b.Event)
+                .FirstOrDefault(b => b.ID == id);
+
+            if (booking == null)
             {
-                ViewBag.Kvantums = _context.ProfProby.ToList();
-                ViewBag.Events = _context.Events.ToList();
-                return View(updatedBooking);
+                return NotFound();
             }
 
-            var booking = _context.Bookings.FirstOrDefault(b => b.ID == updatedBooking.ID);
+            ViewBag.ProfProby = _context.ProfProby.ToList();
+            ViewBag.Events = _context.Events
+                .Where(e => e.ProfProbaId == booking.ProfProbaId)
+                .ToList();
+
+            return View(booking);
+        }
+
+        [HttpGet]
+        public IActionResult GetEventsByProfProba(int profProbaId)
+        {
+            var events = _context.Events
+                .Where(e => e.ProfProbaId == profProbaId)
+                .Select(e => new { id = e.ID, name = e.Name })
+                .ToList();
+
+            return Json(events);
+        }
+
+        [HttpPost]
+        public IActionResult Update(int id, Booking model)
+        {
+            var booking = _context.Bookings.Find(id);
             if (booking == null)
             {
                 return NotFound();
             }
 
             // Обновляем только разрешенные поля
-            booking.ProfProbaId = updatedBooking.ProfProbaId;
-            booking.EventId = updatedBooking.EventId;
-            booking.FullName = updatedBooking.FullName;
-            booking.Email = updatedBooking.Email;
-            booking.PhoneNumber = updatedBooking.PhoneNumber;
-            booking.SchoolName = updatedBooking.SchoolName;
-            booking.BookingDate = updatedBooking.BookingDate;
-            booking.TimeRange = updatedBooking.TimeRange;
+            booking.ProfProbaId = model.ProfProbaId;
+            booking.EventId = model.EventId;
+            booking.FullName = model.FullName;
+            booking.Email = model.Email;
+            booking.PhoneNumber = model.PhoneNumber;
+            booking.SchoolName = model.SchoolName;
+            booking.BookingDate = model.BookingDate;
+            booking.TimeRange = model.TimeRange;
 
-            _context.Bookings.Update(booking);
             _context.SaveChanges();
-
             return RedirectToAction("Index");
         }
 

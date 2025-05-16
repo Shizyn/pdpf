@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Прикрепить файлы к заявке";
     var userBookings = ViewBag.UserBookings as List<Booking>;
+    var userExcursionBookings = ViewBag.UserExcursionBookings as List<QuantumEvents.Models.ExcursionBooking>;
 }
 
 <!DOCTYPE html>
@@ -152,24 +153,42 @@
             <div class="alert alert-warning">@TempData["Notice"]</div>
         }
 
+        <h2>Загрузка файла к заявке</h2>
+
         <form id="fileUploadForm" method="post" enctype="multipart/form-data" onsubmit="return validateFileTypes()">
             <div class="form-group">
                 <label for="bookingId">Доступные заявки:</label>
                 <select id="bookingId" name="bookingId" class="form-control" required>
                     <option value="">-- Выберите заявку --</option>
+
+                    @* Основные заявки *@
                     @if (userBookings != null)
                     {
                         foreach (var booking in userBookings)
                         {
-                            // Проверка статуса заявки
                             if (booking.Status == "Отклонено")
                             {
-                                // Здесь можно просто пропустить отображение этой заявки
                                 continue;
                             }
 
                             <option value="@booking.ID" @(booking.Status == "Новое" ? "disabled" : "")>
                                 Заявка #@booking.ID (@booking.TypeEvent) - @booking.BookingDate.ToString("dd.MM.yyyy")
+                            </option>
+                        }
+                    }
+
+                    @* Экскурсионные заявки *@
+                    @if (userExcursionBookings != null)
+                    {
+                        foreach (var excursion in userExcursionBookings)
+                        {
+                            if (excursion.Status != "Подтверждена")
+                            {
+                                continue;
+                            }
+
+                            <option value="@excursion.Id">
+                                Экскурсия #@excursion.Id - @excursion.BookingDate.ToString("dd.MM.yyyy")
                             </option>
                         }
                     }

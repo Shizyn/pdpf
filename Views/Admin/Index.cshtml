@@ -5,7 +5,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css">
     <title>Панель администратора</title>
     <style>
@@ -14,7 +14,7 @@
             background: linear-gradient(to bottom, white, #6495EDBA);
             padding: 20px;
             min-height: 100vh;
-            margin: 0; 
+            margin: 0;
         }
 
         h1 {
@@ -36,9 +36,9 @@
             transition: background-color 0.3s;
         }
 
-        a.export-button:hover {
-            background-color: #0056b3;
-        }
+            a.export-button:hover {
+                background-color: #0056b3;
+            }
 
         table {
             width: 100%;
@@ -82,24 +82,26 @@
             margin-bottom: 3px;
         }
 
-        td button:hover {
-            background-color: #0056b3;
-        }
+            td button:hover {
+                background-color: #0056b3;
+            }
 
         media (max-width: 768px) {
-            td, th {
-                font-size: 12px; 
-            }
+            td, th
 
-            td button {
-                padding: 6px; 
-            }
-
-            a.export-button {
-                font-size: 14px;
-            }
+        {
+            font-size: 12px;
         }
-    </style>
+
+        td button {
+            padding: 6px;
+        }
+
+        a.export-button {
+            font-size: 14px;
+        }
+
+        }</style>
 </head>
 <body>
     <h1 class="centered">Заявки клиентов</h1>
@@ -112,8 +114,8 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Тип мероприятия</th>
+                    @* <th>ID</th>
+                    <th>Тип мероприятия</th> *@
                     <th>Профпроба</th>
                     <th>Событие</th>
                     <th>ФИО</th>
@@ -130,8 +132,8 @@
                 @foreach (var booking in Model.Bookings)
                 {
                     <tr style="@(booking.Status == "Новое" ? "background-color:#f2f2f2;" : booking.Status == "Подтверждено" ? "background-color:#c1ffa55e;" : booking.Status == "Отклонено" ? "background-color:#ffa5a557;": "")">
-                        <td>@booking.ID</td>
-                        <td>@booking.TypeEvent</td>
+                        @* <td>@booking.ID</td>
+                        <td>@booking.TypeEvent</td> *@
                         <td>@booking.ProfProba?.Name</td>
                         <td>@booking.Event?.Name</td>
                         <td>@booking.FullName</td>
@@ -141,7 +143,7 @@
                         <td>@booking.BookingDate.ToString("dd.MM.yyyy")</td>
                         <td>@booking.TimeRange</td>
                         <td>@booking.Status</td>
-                        <td>
+                        @* <td>
                             @if (booking.Files != null && booking.Files.Any())
                             {
                                 foreach (var file in booking.Files)
@@ -151,7 +153,7 @@
                                     <br>
                                 }
                             }
-                        </td>
+                        </td> *@
                         <td>
                             @if (booking.Status == "Новое")
                             {
@@ -179,7 +181,7 @@
 
                             <form method="post" action="/Admin/Delete">
                                 <input type="hidden" name="id" value="@booking.ID" />
-                                <button type="submit">Удалить</button>
+                                <button type="submit" onclick="return confirm('Вы уверены, что хотите удалить эту заявку?');">Удалить</button>
                             </form>
                         </td>
                     </tr>
@@ -288,7 +290,7 @@
         {
             <p>Нет заявок с прикрепленными файлами</p>
         }
-     }
-    
+    }
+
 </body>
 </html>

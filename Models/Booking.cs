@@ -10,44 +10,40 @@ namespace QuantumEvents.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
-        [Required(ErrorMessage = "Тип мероприятия обязателен")]
-        public string TypeEvent { get; set; }
 
-        [Required(ErrorMessage = "Пропроба обязателена")]
+        [ForeignKey("User")]
+        public int UserId { get; set; }
+        public User User { get; set; }
+        [ForeignKey("ProfProba")]
+        [Column("TrialID")]
         public int ProfProbaId { get; set; }
         public ProfProba ProfProba { get; set; }
 
-        [Required(ErrorMessage = "Событие обязательно")]
+        [ForeignKey("Event")]
         public int EventId { get; set; }
+
         public Event Event { get; set; }
-
-        [Required(ErrorMessage = "ФИО обязательно")]
+        [Required]
         public string FullName { get; set; }
-
-        [Required(ErrorMessage = "Email обязателен")]
-        [EmailAddress(ErrorMessage = "Некорректный email")]
-        public string Email { get; set; }
-
-        [Required(ErrorMessage = "Телефон обязателен")]
-        [Phone(ErrorMessage = "Некорректный номер телефона")]
+        //[DataType(DataType.Date)]
+        //[Display(Name = "Дата рождения")]
+        //public DateTime BirthDate { get; set; }
+        [Required]
+        [Phone]
         public string PhoneNumber { get; set; }
 
-        [Required(ErrorMessage = "Школа обязательна")]
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
         public string SchoolName { get; set; }
-
-        [Required(ErrorMessage = "Дата обязательна")]
-        public DateTime BookingDate { get; set; }
-
-        [Required(ErrorMessage = "Время обязательно")]
+        public string TypeEvent { get; set; }
+        [Required]
         public string TimeRange { get; set; }
-
+        [Required]
+        public DateTime BookingDate { get; set; }
         [Required]
         public string Status { get; set; }
-
-        [Required]
-        public int UserId { get; set; }
-        public User User { get; set; }
-
-        public List<UploadedFile> Files { get; set; }
+        public virtual ICollection<UploadedFile> Files { get; set; }
     }
 }
